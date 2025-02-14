@@ -6,18 +6,21 @@ export default class AuthController {
     async login(request,response){
         try {
             let { documento, password } = request.body;
+           
 
             let user = (await User.findOne({ where: { documento: documento } })).toJSON();
-      
+            
             if (!user || !(await bcrypt.compare(password, user.password))) {
                 return res.status(401).json({ message: '' });
             }
 
-            const token = jwt.sign({ documento: user.documento }, process.env.JWT_SECRET, {
-                expiresIn: process.env.JWT_EXPIRES_IN || '1h',
-            });
+            // const token = jwt.sign({ documento: user.documento }, process.env.JWT_SECRET, {
+            //     expiresIn: process.env.JWT_EXPIRES_IN || '1h',
+            // });
+
+            // console.log(token)
         
-            response.json({ token });
+            // response.json({ token });
         }  catch (error) {
             response.status(500).json({ message: 'Error trying to login!' });
         }

@@ -1,0 +1,43 @@
+version: "3.8"
+services:
+  db:
+    image: mysql:8
+    container_name: meu-mysql
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: Mob121216!
+      MYSQL_DATABASE: db_mobserv
+      MYSQL_USER: denis@mobservapp.com.br
+      MYSQL_PASSWORD: Mob121216!
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      timeout: 5s
+      retries: 5
+  api:
+    container_name: mobserv-api
+    build: .
+    ports:
+      - "5000:5000"
+    environment:
+      - NODE_ENV=production
+      - PORT=5000
+      - JWT_SECRET=MobServ2025Novo
+      - JWT_EXPIRES_IN='1h'
+      - DB_HOST=db
+      - DB_PORT=3306
+      - DB_USER=denis@mobservapp.com.br
+      - DB_PASSWORD=Mob121216!
+      - DB_NAME=db_mobserv
+    volumes:
+      - .:/app
+      - /app/node_modules
+    depends_on:
+      db:
+        condition: service_healthy
+
+volumes:
+  mysql_data:
